@@ -6,7 +6,7 @@ var mrG;
 var FPS = 60;
 var cellSize = 35;
 var score = 0;
-var start = true;
+
 
 
 const wall = new Image();
@@ -188,17 +188,10 @@ function onKeyDown(event){
     }
 }
 
-/*
-window.onload = function(){
 
-    var m = new World();
-    var u = new Pack();
-    var e = new Enemy();
-    
-    e.set(m);
-    u.set(m);
-    m.draw();
-};*/
+window.onload = function(){
+    init();
+};
 
 
 ///canvas.addEventListener('keydown',onKeyDown,false);
@@ -243,12 +236,6 @@ document.onkeydown = function(event){
 	var dCode = 68;    
     var keyCode = event.keyCode;
 
-    if (start){
-        init();
-        start = false;
-    }
-    
-    
     switch(keyCode){
         case wCode:
             if (mrP.isMove(mrP.x, mrP.y-1)){             
