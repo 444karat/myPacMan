@@ -1,7 +1,13 @@
-(function () {
-    'use strict';
-var canvas, ctx, cellSize;
+var canvas;
+var ctx;
+var mrP;
+var mrG;
+
 var FPS = 60;
+var cellSize = 35;
+var score = 0;
+var start = true;
+
 
 const wall = new Image();
 const packman = new Image();
@@ -16,119 +22,144 @@ point.src = "point.png";
 canvas = document.getElementById("Canvas");
 ctx = canvas.getContext("2d");
 
-cellSize = 35;
 
 
-function World(){
-    this.map = [ 
-        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-        [1,2,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,2,1],
-        [1,2,1,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,1,2,1],
-        [1,2,1,0,1,2,1,2,2,2,2,2,2,2,1,2,1,1,1,2,1],
-        [1,2,1,1,1,2,1,2,1,1,1,1,1,2,1,2,1,1,1,2,1],
-        [1,2,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,2,1],
-        [1,2,1,1,2,1,1,1,1,2,1,2,1,1,1,1,2,1,1,2,1],
-        [1,2,2,2,2,2,1,2,2,2,2,2,2,2,1,2,2,2,2,2,1],
-        [1,1,1,2,2,2,1,2,1,1,0,1,1,2,1,2,2,2,1,1,1],
-        [1,1,1,1,2,2,1,2,1,0,0,0,1,2,1,2,2,1,1,1,1],
-        [1,2,2,2,2,2,2,2,1,0,0,0,1,2,2,2,2,2,2,2,1],
-        [1,1,1,1,2,2,1,2,1,1,1,1,1,2,1,2,2,1,1,1,1],
-        [1,1,1,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,1,1,1],
-        [1,2,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,2,1],
-        [1,2,1,1,2,1,1,1,1,2,2,2,1,1,1,1,2,1,1,2,1],
-        [1,2,2,1,2,2,2,2,2,2,2,2,2,2,2,2,2,1,2,2,1],
-        [1,2,2,1,1,2,2,2,1,1,1,1,1,2,2,2,1,1,2,2,1],
-        [1,2,2,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,2,1],
-        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-    ];
+
+var map = [ 
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,2,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,2,1],
+    [1,2,1,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,1,2,1],
+    [1,2,1,0,1,2,1,2,2,2,2,2,2,2,1,2,1,1,1,2,1],
+    [1,2,1,1,1,2,1,2,1,1,1,1,1,2,1,2,1,1,1,2,1],
+    [1,2,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,2,1],
+    [1,2,1,1,2,1,1,1,1,2,1,2,1,1,1,1,2,1,1,2,1],
+    [1,2,2,2,2,2,1,2,2,2,2,2,2,2,1,2,2,2,2,2,1],
+    [1,1,1,2,2,2,1,2,1,1,0,1,1,2,1,2,2,2,1,1,1],
+    [1,1,1,1,2,2,1,2,1,0,0,0,1,2,1,2,2,1,1,1,1],
+    [1,2,2,2,2,2,2,2,1,0,0,0,1,2,2,2,2,2,2,2,1],
+    [1,1,1,1,2,2,1,2,1,1,1,1,1,2,1,2,2,1,1,1,1],
+    [1,1,1,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,1,1,1],
+    [1,2,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,2,1],
+    [1,2,1,1,2,1,1,1,1,2,2,2,1,1,1,1,2,1,1,2,1],
+    [1,2,2,1,2,2,2,2,2,2,2,2,2,2,2,2,2,1,2,2,1],
+    [1,2,2,1,1,2,2,2,1,1,1,1,1,2,2,2,1,1,2,2,1],
+    [1,2,2,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,2,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+];
     
-    
-    
-};
+function init(){
+    mrP = new Pack;
+    mrG = new Enemy;
 
+    mrG.draw();
+    mrP.draw();
 
-function onKey(event){
-    var wCode = 87; 
-	var aCode = 65;
-	var sCode = 83;
-	var dCode = 68;
-
-}
-
-
-
-window['World'] = World;
-World.prototype = {
-    draw: function (){
-        for( var i = 0; i < this.map.length; i++ ){
-            for(var j = 0; j < this.map[i].length; j++){
-                if (this.map[i][j] == 1)  {
-                    ctx.drawImage(wall,j*cellSize,i*cellSize,cellSize,cellSize);            
-                }
-                else if (this.map[i][j] == 2){
-                    // point
-                    ctx.drawImage(point,j*cellSize,i*cellSize,cellSize,cellSize);            
-                }
-                    
-                else if (this.map[i][j] == 3){
-                    //enamy
-                    ctx.drawImage(ghost,j*cellSize,i*cellSize,cellSize,cellSize);
-                }
-                else if (this.map[i][j] == 4){
-                    //packman
-                    ctx.drawImage(packman,j*cellSize,i*cellSize,cellSize,cellSize);
-                }
-                    
+    for( var i = 0; i < map.length; i++ ){
+        for(var j = 0; j < map[i].length; j++){
+            if (map[i][j] == 1)  {
+                ctx.drawImage(wall,i*cellSize,j*cellSize,cellSize,cellSize);            
             }
+            else if (map[i][j] == 2){
+                // point
+                ctx.drawImage(point,i*cellSize,j*cellSize,cellSize,cellSize);            
+            }               
         }
-    }// .bind(this));
+    }   
 }
 
-})();
-
+function updateScreen(x,y){
+    ctx.clearRect(x*cellSize,y*cellSize,cellSize,cellSize);
+}
 
 function Pack(){
-    this.x = 1;
-    this.y = 1;
+    this.x = 10;
+    this.y = 10;
 
 }
 Pack.prototype ={
-    set: function(World){
-        World.map[this.x][this.y] = 4;
+    draw: function() {
+        map[this.x][this.y] = 4;
+        ctx.drawImage(packman,this.x*cellSize,this.y*cellSize,cellSize,cellSize);
+    },
+    move: function(x,y){
+        if(map[x][y] == 2){
+            score++;
+        }
+        if (map[x][y] == 3){
+            updateScreen(this.x,this.y);
+            alert("dead");
+            return;
+        }
+        updateScreen(this.x,this.y);
+        map[this.x][this.y] = 0;
+        this.x = x;
+        this.y = y;
+        map[this.x][this.y] = 4;
+        this.draw();
+    },
+    isMove: function(x,y){
+        if(map[x][y] != 1){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 }
-
 function Enemy(){
-    this.x = 2;
+    this.x = 1;
     this.y = 1;
-
 }
 Enemy.prototype ={
-    set: function(World){
-        World.map[this.x][this.y] = 3;
+    draw: function(){
+        map[this.x][this.y] = 3;
+        ctx.drawImage(ghost,this.y*cellSize,this.x*cellSize,cellSize,cellSize);
+    },
+    isMove: function(x,y){
+        if(map[x][y] != 1){
+            return true;
+        }
+        else{
+            return false;
+        }
+    },
+    move: function(){
+        
+    },
+    randGo: function(){
+        return Math.floor(Math.random() * (5 - 1)) + 1;
     }
+
 }
 
-document.onkeydown = function(event){
+
+function onKeyDown(event){
     var wCode = 87; 
 	var aCode = 65;
 	var sCode = 83;
-	var dCode = 68;
+	var dCode = 68;    
+    var keyCode = event.keyCode;
 
-	if (event.keyCode == wCode){
-        console.log(wCode);
-    }
-    if (event.keyCode == aCode){
-        console.log(aCode);
-    }
-    if (event.keyCode == sCode){
-        console.log(sCode);
-    }
-    if (event.keyCode == dCode){
-        console.log(dCode);
+	switch(keyCode){
+        case wCode:
+            console.log(mrP.isMove(9,9));
+            if (mrP.isMove(mrP.x+1, mrP.y)){             
+                   mrP.move();
+            }
+            break;
+        case aCode:
+            console.log(a);
+            break;    
+        case sCode:
+            console.log(s);
+            break;
+        case dCode:
+            console.log(d);
+            break;
     }
 }
 
+/*
 window.onload = function(){
 
     var m = new World();
@@ -138,5 +169,45 @@ window.onload = function(){
     e.set(m);
     u.set(m);
     m.draw();
-};
+};*/
 
+
+///canvas.addEventListener('keydown',onKeyDown,false);
+
+document.onkeydown = function(event){
+    var wCode = 87; 
+	var aCode = 65;
+	var sCode = 83;
+	var dCode = 68;    
+    var keyCode = event.keyCode;
+
+    if (start){
+        init();
+        start = false;
+    }
+    
+    switch(keyCode){
+        case wCode:
+            if (mrP.isMove(mrP.x, mrP.y-1)){             
+                   mrP.move(mrP.x,mrP.y-1);
+            }
+            break;
+        case aCode:
+            if(mrP.isMove(mrP.x-1,mrP.y)){
+                mrP.move(mrP.x-1,mrP.y);
+            }
+            break;    
+        case sCode:
+            if(mrP.isMove(mrP.x,mrP.y+1)){
+                mrP.move(mrP.x,mrP.y+1);
+            }
+            break;
+        case dCode:
+            if(mrP.isMove(mrP.x+1,mrP.y)){
+                mrP.move(mrP.x+1,mrP.y);
+            }
+            break;
+    }
+
+    console.log(score);
+}
