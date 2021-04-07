@@ -2,7 +2,11 @@ var canvas;
 var ctx;
 var mrP;
 var mrG;
+var mrE;
+var mrPr;
+var mrD;
 
+var MAX = 196;//196
 var FPS = 60;
 var cellSize = 35;
 var score = 0;
@@ -14,7 +18,9 @@ const wall = new Image();
 const packman = new Image();
 const ghost = new Image();
 const point = new Image();
+const menu = new Image();
 
+menu.src = "menu.png";
 wall.src = "wals.png";
 packman.src = "packman.png";
 ghost.src = "ghost.png";
@@ -49,8 +55,13 @@ var map = [
 ];
     
 function init(){
-    mrP = new Pack;
-    mrG = new Enemy;
+    ctx.drawImage(menu, 15*cellSize,10*cellSize,800,600);
+
+    mrP = new Pack; 
+    mrG = new Enemy;mrG.x = 1; mrG.y = 1;
+    mrE = new Enemy;mrE.x = 1; mrE.y = 19;
+    mrPr = new Enemy;mrPr.x = 17; mrPr.y = 19;
+    mrD = new Enemy;mrD.x = 17; mrD.y = 1;
 
     for( var i = 0; i < map.length; i++ ){
         for(var j = 0; j < map[i].length; j++){
@@ -65,6 +76,9 @@ function init(){
     }
     mrG.draw();
     mrP.draw();   
+    mrE.draw();
+    mrPr.draw();
+    mrD.draw();
 }
 
 function updateScreen(x,y){
@@ -85,11 +99,6 @@ Pack.prototype ={
         if(map[x][y] == 2){
             score++;
         }
-        /*if (map[x][y] == 3){
-            updateScreen(this.x,this.y);
-            alert("dead");
-            return;
-        }*/
         updateScreen(this.x,this.y);
         map[this.x][this.y] = 0;
         this.x = x;
@@ -103,6 +112,24 @@ Pack.prototype ={
         else{
             return false;
         }
+    },
+    end: function(event){
+        if (score == MAX){
+            console.log("max");
+            
+            document.onkeydown = function (event){
+            }
+        
+            /*document.removeEventListener('keydown', event);
+            document.removeEventListener('click', event);*/
+        }
+        if ((this.x == mrG.x && this.y == mrG.y) || (this.x == mrE.x && this.y == mrE.y) ||  (this.x == mrPr.x && this.y == mrPr.y) ||  (this.x == mrD.x && this.y == mrD.y))
+        {
+            console.log("crash");
+            document.onkeydown = function (event){
+            }
+        }
+
     }
 };
 function Enemy(){
@@ -147,28 +174,28 @@ Enemy.prototype ={
             if (where == 1){//up
                 if(this.isMove(this.x,this.y-1)){
                     this.move(this.x,this.y-1);
-                    console.log("up");
+                    //console.log("up");
                     break;
                 }
             }
             if (where == 2){//left
                 if(this.isMove(this.x-1,this.y)){
                     this.move(this.x-1,this.y);
-                    console.log("left");    
+                    //console.log("left");    
                     break;
                 }
             }
             if (where == 3){//down
-                if(this.isMove(this.x-1,this.y)){
-                    this.move(this.x-1,this.y);
-                    console.log("down");
+                if(this.isMove(this.x,this.y+1)){
+                    this.move(this.x,this.y+1);
+                    //console.log("down");
                     break;
                 }
             }
             if (where == 4){//rigth
                 if(this.isMove(this.x+1,this.y)){
                     this.move(this.x+1,this.y);
-                    console.log("rigth");
+                    //console.log("rigth");
                     break;
                 }
             }
@@ -193,27 +220,30 @@ document.onkeydown = function(event){
             if (mrP.isMove(mrP.x, mrP.y-1)){             
                    mrP.move(mrP.x,mrP.y-1);
             }
-            mrG.randGo();
             break;
         case aCode:
             if(mrP.isMove(mrP.x-1,mrP.y)){
                 mrP.move(mrP.x-1,mrP.y);
             }
-            mrG.randGo();            
             break;    
-        case sCode:
+        case sCode:            
             if(mrP.isMove(mrP.x,mrP.y+1)){
                 mrP.move(mrP.x,mrP.y+1);
             }
-            //mrG.move(mrG.x,mrG.y+1);
-            mrG.randGo();
             break;
         case dCode:
             if(mrP.isMove(mrP.x+1,mrP.y)){
                 mrP.move(mrP.x+1,mrP.y);
             }
-            mrG.randGo();
             break;
     }
+
+    mrP.end(document.onkeydown);
+    mrG.randGo();
+    mrE.randGo();
+    mrPr.randGo();
+    mrD.randGo();
+    mrP.end(document.onkeydown);
+
     console.log(score);
 }
